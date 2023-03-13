@@ -6,9 +6,6 @@ using System.Windows.Input;
 namespace System_7;
 public partial class Form1 : Form
 {
-    private string? backPath = null;
-    private string? copyPath = null;
-    private string? movePath = null;
     private string? path1 = null;
     private string? path2 = null;
     bool pulse = false;

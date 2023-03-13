@@ -38,9 +38,9 @@
             copy = new ToolStripMenuItem();
             paste = new ToolStripMenuItem();
             contextMenuStrip2 = new ContextMenuStrip(components);
-            toolStripMenuItem1 = new ToolStripMenuItem();
-            toolStripMenuItem2 = new ToolStripMenuItem();
-            toolStripMenuItem3 = new ToolStripMenuItem();
+            delete1 = new ToolStripMenuItem();
+            copy1 = new ToolStripMenuItem();
+            paste1 = new ToolStripMenuItem();
             contextMenuStrip1.SuspendLayout();
             contextMenuStrip2.SuspendLayout();
             SuspendLayout();
