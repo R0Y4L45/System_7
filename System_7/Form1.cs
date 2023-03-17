@@ -1,14 +1,10 @@
-using Microsoft.VisualBasic;
 using System.Diagnostics;
-using System.Windows.Forms;
-using System.Windows.Input;
+using System.Text;
 
 namespace System_7;
 public partial class Form1 : Form
 {
-    private string? path1 = null;
-    private string? path2 = null;
-    bool pulse = false;
+    private string? path1 = null, path2 = null, copyFileName = string.Empty, fileName;
 
     public Form1()
     {
@@ -26,6 +22,9 @@ public partial class Form1 : Form
 
         foreach (DriveInfo drive in allDrives)
             listView2.Items.Add(drive.Name);
+
+        paste.Enabled = false;
+        paste1.Enabled = false;
     }
 
     private void listView_MouseDown(object sender, MouseEventArgs e)
@@ -38,49 +37,32 @@ public partial class Form1 : Form
             {
                 ListViewItem clickedItem = listView1.GetItemAt(e.X, e.Y);
                 if (clickedItem != null)
+                {
                     contextMenuStrip1.Show(Cursor.Position);
+                    var f = (File.GetAttributes(clickedItem!.Text) & FileAttributes.System);
+                    if (f != 0)
+                    {
+                        delete.Enabled = false;
+                        copy.Enabled = false;
+                    }
+                    else
+                    {
+                        delete.Enabled = true;
+                        copy.Enabled = true;
+                    }
+                }
             }
             else if (list == listView2)
             {
-                ListViewItem clickedItem = listView1.GetItemAt(e.X, e.Y);
+                ListViewItem clickedItem = listView2.GetItemAt(e.X, e.Y);
                 if (clickedItem != null)
+                {
                     contextMenuStrip1.Show(Cursor.Position);
-            }
-        }
-    }
-
-    private void listView_DoubleClick(object sender, EventArgs e)
-    {
-        ListView? list = sender as ListView;
-        if (list == listView1)
-        {
-            if (listView1.SelectedItems.Count > 0)
-            {
-                path1 = listView1.SelectedItems[0].Text;
-                if (Path.HasExtension(listView1.SelectedItems[0].Text))
-                    Process.Start("explorer.exe", listView1.SelectedItems[0].Text);
-                else
-                {
-                    listView1.Items.Clear();
-                    string[] files = Directory.GetFileSystemEntries(path1);
-                    foreach (var item in files)
-                        listView1.Items.Add(item);
-                }
-            }
-        }
-        else if (list == listView2)
-        {
-            if (listView2.SelectedItems.Count > 0)
-            {
-                path2 = listView2.SelectedItems[0].Text;
-                if (Path.HasExtension(listView2.SelectedItems[0].Text))
-                    Process.Start("explorer.exe", listView2.SelectedItems[0].Text);
-                else
-                {
-                    listView2.Items.Clear();
-                    string[] files = Directory.GetFileSystemEntries(path2);
-                    foreach (var item in files)
-                        listView2.Items.Add(item);
+                    var f = (File.GetAttributes(clickedItem!.Text) & FileAttributes.System);
+                    if (f != 0)
+                        delete.Enabled = false;
+                    else
+                        delete.Enabled = true;
                 }
             }
         }
@@ -135,7 +117,6 @@ public partial class Form1 : Form
                 }
             }
         }
-
     }
 
     private void ContextMenu_Click(object sender, EventArgs e)
@@ -160,8 +141,88 @@ public partial class Form1 : Form
                     MessageBox.Show("It is system file you doen't delete it..(");
             }
         }
+        else if (btn == delete1)
+        {
+            if (path2 is not null)
+            {
+                File.Delete(listView2.SelectedItems[0].Text);
 
+                listView1.Items.Clear();
+
+                foreach (var item in Directory.GetFileSystemEntries(path2!))
+                    listView1.Items.Add(item);
+            }
+        }
+        else if (btn == copy)
+        {
+            var f = (File.GetAttributes(listView1.SelectedItems[0].Text) & FileAttributes.System);
+            if (path1 != null && listView1.SelectedItems[0].Text != null && f == 0)
+            {
+                fileName = listView1.SelectedItems[0].Text;
+                if (fileName != null)
+                {
+                    copy.Enabled = false;
+                    paste.Enabled = true;
+                }
+                else
+                {
+                    copyFileName = string.Empty;
+                    copy.Enabled = true;
+                    paste.Enabled = false;
+                }
+            }
+            else
+                copy.Enabled = false;
+        }
     }
 
+    //    if (path1 is not null && copyFileName != string.Empty && copyFileName != null)
+    //    {
+    //      copy.Enabled = true;
+    //      File.Copy(listView1.SelectedItems[0].Text, Path.Combine(path1, copyFileName), true);
+    //      copyFileName = string.Empty;
+    //    }
+    //    else
+    //      copy.Enabled = false;
+
+    private void listView_MouseDoubleClick(object sender, MouseEventArgs e)
+    {
+        ListView? list = sender as ListView;
+        if (e.Button == MouseButtons.Left)
+        {
+            if (list == listView1)
+            {
+                if (listView1.SelectedItems.Count > 0)
+                {
+                    path1 = listView1.SelectedItems[0].Text;
+                    if (Path.HasExtension(listView1.SelectedItems[0].Text))
+                        Process.Start("explorer.exe", listView1.SelectedItems[0].Text);
+                    else
+                    {
+                        listView1.Items.Clear();
+                        string[] files = Directory.GetFileSystemEntries(path1);
+                        foreach (var item in files)
+                            listView1.Items.Add(item);
+                    }
+                }
+            }
+            else if (list == listView2)
+            {
+                if (listView2.SelectedItems.Count > 0)
+                {
+                    path2 = listView2.SelectedItems[0].Text;
+                    if (Path.HasExtension(listView2.SelectedItems[0].Text))
+                        Process.Start("explorer.exe", listView2.SelectedItems[0].Text);
+                    else
+                    {
+                        listView2.Items.Clear();
+                        string[] files = Directory.GetFileSystemEntries(path2);
+                        foreach (var item in files)
+                            listView2.Items.Add(item);
+                    }
+                }
+            }
+        }
+    }
 }
 

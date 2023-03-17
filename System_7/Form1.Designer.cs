@@ -72,7 +72,7 @@
             listView1.Size = new Size(390, 365);
             listView1.TabIndex = 2;
             listView1.UseCompatibleStateImageBehavior = false;
-            listView1.DoubleClick += listView_DoubleClick;
+            listView1.MouseDoubleClick += listView_MouseDoubleClick;
             listView1.MouseDown += listView_MouseDown;
             // 
             // listView2
@@ -82,7 +82,7 @@
             listView2.Size = new Size(392, 365);
             listView2.TabIndex = 3;
             listView2.UseCompatibleStateImageBehavior = false;
-            listView2.DoubleClick += listView_DoubleClick;
+            listView2.MouseDoubleClick += listView_MouseDoubleClick;
             listView2.MouseDown += listView_MouseDown;
             // 
             // contextMenuStrip1
@@ -121,29 +121,29 @@
             contextMenuStrip2.Items.AddRange(new ToolStripItem[] { delete1, copy1, paste1 });
             contextMenuStrip2.Name = "contextMenuStrip1";
             contextMenuStrip2.RenderMode = ToolStripRenderMode.System;
-            contextMenuStrip2.Size = new Size(181, 92);
+            contextMenuStrip2.Size = new Size(118, 70);
             // 
-            // toolStripMenuItem1
+            // delete1
             // 
             delete1.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
-            delete1.Name = "toolStripMenuItem1";
-            delete1.Size = new Size(180, 22);
+            delete1.Name = "delete1";
+            delete1.Size = new Size(117, 22);
             delete1.Text = "Delete";
             delete1.Click += ContextMenu_Click;
             // 
-            // toolStripMenuItem2
+            // copy1
             // 
             copy1.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
-            copy1.Name = "toolStripMenuItem2";
-            copy1.Size = new Size(180, 22);
+            copy1.Name = "copy1";
+            copy1.Size = new Size(117, 22);
             copy1.Text = "Copy";
             copy1.Click += ContextMenu_Click;
             // 
-            // toolStripMenuItem3
+            // paste1
             // 
             paste1.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
-            paste1.Name = "toolStripMenuItem3";
-            paste1.Size = new Size(180, 22);
+            paste1.Name = "paste1";
+            paste1.Size = new Size(117, 22);
             paste1.Text = "Paste";
             paste1.Click += ContextMenu_Click;
             // 
