@@ -1,11 +1,10 @@
 using System.Diagnostics;
-using System.Text;
 
 namespace System_7;
 public partial class Form1 : Form
 {
     private string? path1 = null, path2 = null, copyFileName = string.Empty, fileName;
-
+    bool flag1 = true, flag2 = true;
     public Form1()
     {
         InitializeComponent();
@@ -26,7 +25,6 @@ public partial class Form1 : Form
         paste.Enabled = false;
         paste1.Enabled = false;
     }
-
     private void listView_MouseDown(object sender, MouseEventArgs e)
     {
         ListView? list = sender as ListView;
@@ -48,7 +46,30 @@ public partial class Form1 : Form
                     else
                     {
                         delete.Enabled = true;
-                        copy.Enabled = true;
+                        if (copyFileName == clickedItem.Text)
+                        {
+                            copy.Enabled = false;
+                            paste.Enabled = true;
+                        }
+                        else
+                        {
+                            copy.Enabled = true;
+                            paste.Enabled = false;
+                        }
+                    }
+                }
+                else
+                {
+                    delete.Enabled = false;
+                    copy.Enabled = false;
+                    contextMenuStrip1.Show(Cursor.Position);
+                    if (copyFileName != string.Empty)
+                    {
+                        paste.Enabled = true;
+                    }
+                    else
+                    {
+                        paste.Enabled = false;
                     }
                 }
             }
@@ -67,7 +88,6 @@ public partial class Form1 : Form
             }
         }
     }
-
     private void button_Click(object sender, EventArgs e)
     {
         Button? btn = sender as Button;
@@ -79,10 +99,14 @@ public partial class Form1 : Form
                 if (parentPath != null)
                 {
                     listView1.Items.Clear();
-                    path1 = parentPath.FullName;
-
+                    
                     foreach (var item in Directory.GetFileSystemEntries(parentPath.FullName))
                         listView1.Items.Add(item);
+
+                    if (flag1)
+                        path1 = parentPath.FullName;
+                    else
+                        flag1 = true;
                 }
                 else
                 {
@@ -102,10 +126,14 @@ public partial class Form1 : Form
                 if (parentPath != null)
                 {
                     listView2.Items.Clear();
-                    path2 = parentPath.FullName;
-
+                    
                     foreach (var item in Directory.GetFileSystemEntries(parentPath.FullName))
                         listView2.Items.Add(item);
+                    
+                    if (flag2)
+                        path2 = parentPath.FullName;
+                    else
+                        flag2 = true;
                 }
                 else
                 {
@@ -118,7 +146,6 @@ public partial class Form1 : Form
             }
         }
     }
-
     private void ContextMenu_Click(object sender, EventArgs e)
     {
         ToolStripMenuItem? btn = sender as ToolStripMenuItem;
@@ -155,35 +182,36 @@ public partial class Form1 : Form
         }
         else if (btn == copy)
         {
-            var f = (File.GetAttributes(listView1.SelectedItems[0].Text) & FileAttributes.System);
-            if (path1 != null && listView1.SelectedItems[0].Text != null && f == 0)
+            copyFileName = listView1.SelectedItems[0].Text;
+        }
+        else if (btn == paste)
+        {
+            if (copyFileName != null && path1 != null)
             {
-                fileName = listView1.SelectedItems[0].Text;
-                if (fileName != null)
+                try
                 {
-                    copy.Enabled = false;
-                    paste.Enabled = true;
-                }
-                else
-                {
+                    fileName = Path.GetFileName(copyFileName)!;
+                    File.Copy(copyFileName, Path.Combine(path1, fileName), true);
+
+                    paste.Enabled = false;
                     copyFileName = string.Empty;
                     copy.Enabled = true;
-                    paste.Enabled = false;
+                    fileName = string.Empty;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
                 }
             }
             else
-                copy.Enabled = false;
+            {
+                copyFileName = string.Empty;
+                paste.Enabled = false;
+                copy.Enabled = true;
+                fileName = string.Empty;
+            }
         }
     }
-
-    //    if (path1 is not null && copyFileName != string.Empty && copyFileName != null)
-    //    {
-    //      copy.Enabled = true;
-    //      File.Copy(listView1.SelectedItems[0].Text, Path.Combine(path1, copyFileName), true);
-    //      copyFileName = string.Empty;
-    //    }
-    //    else
-    //      copy.Enabled = false;
 
     private void listView_MouseDoubleClick(object sender, MouseEventArgs e)
     {
@@ -196,7 +224,10 @@ public partial class Form1 : Form
                 {
                     path1 = listView1.SelectedItems[0].Text;
                     if (Path.HasExtension(listView1.SelectedItems[0].Text))
+                    {
                         Process.Start("explorer.exe", listView1.SelectedItems[0].Text);
+                        flag1 = false;
+                    }
                     else
                     {
                         listView1.Items.Clear();
@@ -212,7 +243,10 @@ public partial class Form1 : Form
                 {
                     path2 = listView2.SelectedItems[0].Text;
                     if (Path.HasExtension(listView2.SelectedItems[0].Text))
+                    {
                         Process.Start("explorer.exe", listView2.SelectedItems[0].Text);
+                        flag1 = false;
+                    }
                     else
                     {
                         listView2.Items.Clear();
